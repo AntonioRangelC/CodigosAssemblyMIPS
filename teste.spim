@@ -1,0 +1,35 @@
+.data
+    quebraLinha: .asciiz "\n"
+    C:          .asciiz "C"
+    F:          .asciiz "F"
+    K:          .asciiz "K"
+.text
+    main:
+        li      $v0, 12     # lendo a escala da temperatura
+        syscall
+        move    $s0, $v0    # movendo o caracter para $s0
+
+        li      $v0, 12
+        syscall
+
+        li      $v0, 12     # lendo a escala da temperatura
+        syscall
+        move    $s1, $v0    # movendo o caracter para $s0
+
+        la      $t0, C
+        lbu     $t1, 0($t0)
+        
+        move    $a0, $t1
+        li      $v0, 11
+        syscall
+
+        li     $v0, 10
+        syscall
+    Else:
+        li      $v0, 1
+        li      $a0, 70
+        syscall
+
+        li     $v0, 10
+        syscall
+

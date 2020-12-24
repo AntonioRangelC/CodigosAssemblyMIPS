@@ -1,0 +1,10 @@
+#Fazendo um olá mundo em assembly
+.data
+    Ola: .asciiz "Ola Mundo\n"
+.text
+    main:
+        li $v0,4        # 4 é o código do serviço a ser usado, que é carregado em v0
+        la $a0,Ola	    # carregar o valor do argumento(Ola) em a0
+        syscall		    # chamada do sistema para executar essa tarefa 
+        li $v0,10       # 10 é o código de saída, que é armazenado em v0
+        syscall         # chamada do sistema para fazer a saída

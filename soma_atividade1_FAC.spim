@@ -1,0 +1,22 @@
+#Somar dois numeros inteiros e imprimir a resposta
+.data
+    quebraLinha: .asciiz "\n"
+.text
+    main:
+        li      $v0,5               #lendo o primeiro numero
+        syscall                     #chamando o sistema para fazer a leitura
+        move    $t0,$v0             #movendo o número que foi lido para um registrador
+        li      $v0,5               #lendo o segundo numero
+        syscall                     #chamando o sistema para fazer a leitura
+        move    $t1,$v0             #movendo o segundo numero para um registrador
+        add		$t2, $t1, $t0		# $t2 = $t1 + $t2
+        li      $v0,1               #imprimindo um inteiro
+        move    $a0,$t2             #movendo o valor da soma para $a0, para imprimir
+        syscall                     #chamando o sistema
+        li      $v0,4               #codigo para imprimir string
+        la		$a0,quebraLinha     #movendo a string para ser impressa
+        syscall             
+        li      $v0,10              #comando de saida
+        syscall
+
+        

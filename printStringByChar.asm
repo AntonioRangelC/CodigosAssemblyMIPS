@@ -1,0 +1,25 @@
+.data
+    frase: .asciiz "Rato roeu a roupa"
+.text
+main:
+    li   $s0, 20 # tamanho da string
+    li   $s1, 0  # i=0
+    la   $s4, frase
+
+Loop:    
+    add  $s2, $s1, $s4      # s2 recebe o endereço de frase[i]
+    lbu  $s3, 0($s2)        # s3 = frase[i]
+
+    beq  $s3, $zero, Exit   # Se frase[i] == '\0', ele sai
+    beq  $s1,  $s0, Exit    # Se i == 20, ele sai
+
+    li   $v0, 11
+    move $a0, $s3           # imprimindo frase[i]
+    syscall
+
+    addi $s0, $s0, 1        # i++
+    
+    j    Loop
+Exit:
+    li   $v0, 10
+    syscall

@@ -1,0 +1,22 @@
+#Ler uma string e imprimir
+.data
+    quebraLinha: .asciiz "\n"
+    texto:  .space 15
+.text
+    main:
+        
+        li      $v0, 8
+        la		$a0, texto		        #Lendo string
+        la     $a1, 15         #Tamanho da string em a1
+        syscall
+        li		$v0, 4 		            #Codigo para imprimir string
+        la      $a0, texto
+        syscall
+        li      $v0, 4
+        la      $a0, quebraLinha        #imprimindo a quebra de linha
+        syscall
+        li      $v0, 10
+        syscall
+
+        
+        

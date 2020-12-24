@@ -1,0 +1,122 @@
+# o objetivo desse codigo é transformar um temperatura em qualquer escala
+# a primeira linha contem uma temperatura, a segunda linha tem a escala da temperatura
+# e a terceira linha tem a escala desejada
+.data
+    quebraLinha: .asciiz "\n"
+    C:          .asciiz "C"
+    F:          .asciiz "F"
+    K:          .asciiz "K"
+.text
+    main:
+
+        li      $v0, 12          # lendo a escala da temperatura
+        syscall
+        move    $s0, $v0         # movendo o caracter para $s0
+
+        li      $v0, 12          # lendo a escala da temperatura
+        syscall
+
+        li      $v0, 12          # lendo a escala da temperatura
+        syscall
+        move    $s1, $v0         # movendo o caracter para $s1
+
+        li      $v0, 12          # lendo a escala da temperatura
+        syscall
+
+        li      $v0, 6
+        syscall
+
+        mov.s   $f1,  $f0         # movendo valor para $f1
+
+        la      $t0, C
+        lbu     $t1, 0($t0)
+
+        la      $t0, K
+        lbu     $t2, 0($t0)
+
+        la      $t0, F
+        lbu     $t3, 0($t0)
+
+
+        bne     $t1, $s0, Else1
+        beq     $s1, $t2, Celsius_Kelvin    # 
+        j       Celsius_Fah                 # caso contrario, vai pro conversor de celsius pra fahrenheit
+
+    Else1:
+        bne     $t2, $s0, Else2
+        beq     $s1, $t1, Kelvin_Celsius
+        j       Kelvin_Fah
+
+    Else2:
+        beq     $s1, $t1 Fah_Celsius
+        j       Fah_Kelvin
+
+    Celsius_Kelvin:
+        li.s     $f3, 273.15
+        add.s   $f1, $f1, $f3
+        j       Exit
+
+    Celsius_Fah:
+        li.s   $f3, 9.0
+        mul.s $f1, $f1, $f3
+        li.s   $f3, 5.0
+        div.s  $f1, $f1, $f3
+        li.s   $f3, 32.0    
+        add.s  $f1, $f1, $f3
+        j      Exit
+    
+    Kelvin_Celsius:
+        li.s    $f3, 273.15
+        sub.s  $f1, $f1, $f3
+        j      Exit
+
+    Kelvin_Fah:
+        li.s    $f3, 273.15
+        sub.s  $f1, $f1, $f3
+        li.s   $f3, 5.0
+        div.s  $f1, $f1, $f3
+        li.s   $f3, 9.0
+        mul.s  $f1, $f1, $f3
+        li.s   $f3, 32.0
+        add.s  $f1, $f1, $f3
+        j      Exit
+
+    Fah_Celsius:
+        li.s   $f3, 32.0
+        sub.s  $f1, $f1, $f3
+        li.s   $f5, 5.0
+        li.s   $f9, 9.0
+        div.s  $f5, $f5, $f9
+        mul.s  $f1, $f1, $f5
+        j      Exit
+
+    Fah_Kelvin:
+        li.s  $f3, 32.0
+        sub.s $f1, $f1, $f3
+        li.s  $f3, 9.0
+        div.s  $f1, $f1, $f3
+        li.s  $f3, 5.0
+        mul.s $f1, $f1, $f3
+        li.s   $f3, 273.15
+        add.s $f1, $f1, $f3
+        j     Exit
+
+    Exit:
+        
+        li $v0, 2
+        mov.s $f12, $f1
+        syscall
+
+        li $v0, 4
+        la $a0, quebraLinha
+        syscall
+
+        li $v0, 10
+        syscall
+
+
+
+
+
+
+

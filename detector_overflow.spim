@@ -1,0 +1,88 @@
+#Enunciado: Sua tarefa nesse exercício é criar um programa que faça a adição entre dois números inteiros e imprima o resultado. Caso
+# a adição resulte em overflow, você deve imprimir “overflow”
+#
+#Entrada: A entrada é composta por três linhas. A primeira linha contém um inteiro, que será 0 se a soma for entre inteiros sem
+# sinal, e 1 se a soma for entre inteiros com sinal. As duas linhas seguintes contém dois números inteiros a e b de 32 bits.
+#
+#Saida: Você deve imprimir a soma entre a e b, ou “overflow” se a soma resultar em overflow
+.data
+    quebraLinha: .asciiz "\n"
+    overflow: .asciiz "overflow\n"
+.text
+    main:
+        #$s0 = sinal   $s1 = prim_num  $s2 = seg_num   $s3 = soma
+        li   $v0, 5                       # lendo se tem sinal ou nao
+        syscall
+        move $s0, $v0
+
+        li   $v0, 5                       # lendo o primeiro numero
+        syscall
+        move $s1, $v0
+
+        li   $v0, 5                       # lendo o segundo numero
+        syscall
+        move $s2, $v0
+
+        beq  $s0, $zero, intSemSinal     # if( sinal == 0) 
+        
+        addu $t0, $s1, $s2               # adicao ignorando sinal
+        beq  $s1, $zero, semOverflow1
+        beq  $s2, $zero, semOverflow1
+        xor  $t1, $s1, $s2               # se os sinais forem diferentes, $t1 recebe um numero negativo
+        slt  $t1, $t1, $zero             # se $t1 for negativo, vai dar overflow, e $t1 recebe 0. Caso contrario, não da overflow, e $t1 recebe 1
+        bne  $t1, $zero, semOverflow1    # se $t1 for igual a 0, ele imprime "overflow", se for 1, desvia para semOverflow
+
+        # verificando o caso de dois numeros positivos dao resultado positivo
+        xor  $t1, $t0, $s1               # se $t0(resultado da soma) tiver sinal diferente de $s1, $t1 recebe 1
+        xor  $t2, $t0, $s2               # se $t0(resultado da soma) tiver sinal diferente de $s2, $t2 recebe 1
+        and  $t1, $t1, $t2               # se $t1 e $t2 forem 1, quer dizer que haverá overflow, entao $t1 recebe 1
+        beq  $t1, $zero, semOverflow1    # se $t1 for 0, nao havera overflow
+
+        # verificando o caso de dois numeros negativos dao resultado negativo
+        and  $t1, $t0, $s1               # se $t0(resultado da soma) e $s1 forem negativos, $t1 recebe 1
+        and  $t2, $t0, $s2               # se $t0(resultado da soma) e $s2 forem negativos, $t2 recebe 1
+        and  $t1, $t1, $t2               # se $t1 e $t2 forem 1, não haverá overflow
+        bne  $t1, $zero, semOverflow1    # se $t1 for diferente de 0
+        j    imprimeOver
+
+    semOverflow1:
+        li   $v0, 1                      # imprimindo a soma dos numeros
+        move $a0, $t0
+        syscall
+        
+        li   $v0, 4
+        la   $a0, quebraLinha            # imprimindo a quebra de linha
+        syscall
+
+        j    Exit
+
+    intSemSinal:
+        nor  $t0, $s1, $zero             # negando o primeiro numero 
+        sltu $t0, $t0, $s2               # verificando se o numero negado é menor que o segundo numero
+        bne  $t0, $zero, imprimeOver     # se o numero negado for menor que o segundo, vai dar overflow
+
+        xor  $t1, $t0, $s1               # se $t0(resultado da soma) tiver sinal diferente de $s1, $t1 recebe 1
+        xor  $t2, $t0, $s2               # se $t0(resultado da soma) tiver sinal diferente de $s2, $t2 recebe 1
+        and  $t1, $t1, $t2               # se $t1 e $t2 forem 1, quer dizer que haverá overflow, entao $t1 recebe 1
+        beq  $t1, $zero, Else            # se $t1 for 0, nao havera overflow
+
+        j    imprimeOver
+    Else:
+        add  $t1, $s1, $s2               # somando os numeros
+
+        li $v0, 1                        # imprimindo a soma
+        move $a0, $t1
+        syscall
+
+        li   $v0, 4
+        la   $a0, quebraLinha            # imprimindo \n
+        syscall
+
+        j    Exit
+    imprimeOver:
+        li   $v0, 4
+        la   $a0, overflow              # imprimindo overflow
+        syscall
+    Exit:
+        li   $v0, 10
+        syscall
